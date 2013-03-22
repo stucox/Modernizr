@@ -78,6 +78,7 @@
     "test/custom-protocol-handler",
     "test/dart",
     "test/dataview-api",
+    "test/device/hover",
     "test/dom/classlist",
     "test/dom/createElement-attrs",
     "test/dom/dataset",

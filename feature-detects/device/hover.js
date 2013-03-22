@@ -35,7 +35,7 @@ define(['Modernizr', 'addTest', 'docElement'], function( Modernizr, addTest, doc
     };
     var onMouseMove = function () {
         if(hadMouseOver) {
-            addTest('mouselike', true);
+            addTest('hover', true);
             removeEvent(docElement, 'mousedown', onMouseDown);
             removeEvent(docElement, 'mousemove', onMouseMove);
         }
