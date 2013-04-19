@@ -16,9 +16,8 @@
 define(['Modernizr', 'testStyles', 'getStyle'], function( Modernizr, testStyles, getStyle ) {
   Modernizr.addTest('bgpositionxy', function() {
     return testStyles('#modernizr {background-position: 3px 5px;}', function( elem ) {
-      var cssStyleDeclaration = getStyle(elem);
-      var xSupport = (cssStyleDeclaration.getPropertyValue('backgroundPositionX') == '3px') || (cssStyleDeclaration['background-position-x'] == '3px');
-      var ySupport = (cssStyleDeclaration.getPropertyValue('backgroundPositionY') == '5px') || (cssStyleDeclaration['background-position-y'] == '5px');
+      var xSupport = getStyle(elem, 'background-position-x') == '3px';
+      var ySupport = getStyle(elem, 'background-position-y') == '5px';
       return xSupport && ySupport;
     });
   });

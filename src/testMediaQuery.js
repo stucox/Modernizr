@@ -10,7 +10,7 @@ define(['injectElementWithStyles', 'getStyle'], function( injectElementWithStyle
     }
 
     injectElementWithStyles('@media ' + mq + ' { #modernizr { position: absolute; } }', function( node ) {
-      bool = getStyle(node)['position'] == 'absolute';
+      bool = getStyle(node, 'position') == 'absolute';
     });
 
     return bool;

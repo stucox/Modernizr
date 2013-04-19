@@ -10,17 +10,17 @@ define(['Modernizr', 'createElement', 'docElement', 'getStyle'], function( Moder
     var rt = createElement('rt');
     var rp = createElement('rp');
     var displayStyleProperty = 'display';
-    var fontSizeStyleProperty = 'fontSize'; // 'fontSize' - because it`s only used for IE6 and IE7
+    var fontSizeStyleProperty = 'font-size'; // Used for IE6 and IE7
 
     ruby.appendChild(rp);
     ruby.appendChild(rt);
     docElement.appendChild(ruby);
 
     // browsers that support <ruby> hide the <rp> via "display:none"
-    if ( getStyle(rp).getPropertyValue(displayStyleProperty) == 'none' ||                                                       // for non-IE browsers
+    if ( getStyle(rp, displayStyleProperty) == 'none' ||                                                       // for non-IE browsers
         // but in IE browsers <rp> has "display:inline" so, the test needs other conditions:
-        getStyle(ruby).getPropertyValue(displayStyleProperty) == 'ruby' && getStyle(rt).getPropertyValue(displayStyleProperty) == 'ruby-text' || // for IE8 & IE9
-          getStyle(rp).getPropertyValue(fontSizeStyleProperty) == '6pt' && getStyle(rt).getPropertyValue(fontSizeStyleProperty) == '6pt' ) {       // for IE6 & IE7
+        getStyle(ruby, displayStyleProperty) == 'ruby' && getStyle(rt, displayStyleProperty) == 'ruby-text' || // for IE8 & IE9
+        getStyle(rp, fontSizeStyleProperty) == '6pt' && getStyle(rt, fontSizeStyleProperty) == '6pt' ) {       // for IE6 & IE7
 
       cleanUp();
       return true;

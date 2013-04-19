@@ -19,7 +19,7 @@
 define(['Modernizr', 'testStyles', 'getStyle'], function( Modernizr, testStyles, getStyle ) {
 
   function getBgRepeatValue( elem ) {
-    return getStyle(elem).getPropertyValue('background');
+    return getStyle(elem, 'background');
   }
 
   testStyles(' #modernizr { background-repeat: round; } ', function( elem, rule ) {
