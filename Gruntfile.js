@@ -3,6 +3,8 @@
 module.exports = function( grunt ) {
   'use strict';
 
+  var fs = require('fs');
+  var path = require('path');
   var modConfig = grunt.file.readJSON('lib/config-all.json');
 
   grunt.initConfig({
@@ -29,10 +31,13 @@ module.exports = function( grunt ) {
         ' */'
     },
     meta: {
-      
+
     },
     qunit: {
       files: ['test/index.html']
+    },
+    nodeunit: {
+      files: ['test/api/*.js']
     },
     stripdefine: {
       build: [
@@ -50,6 +55,9 @@ module.exports = function( grunt ) {
         banner: '<%= banner.compact %>',
         mangle: {
           except: ['Modernizr']
+        },
+        beautify: {
+          ascii_only: true
         }
       },
       dist: {
@@ -83,6 +91,7 @@ module.exports = function( grunt ) {
         noarg: true,
         smarttabs: true,
         sub: true,
+        trailing: true,
         undef: true,
         globals: {
           Modernizr: true,
@@ -97,7 +106,7 @@ module.exports = function( grunt ) {
       files: [
         'Gruntfile.js',
         'src/*.js',
-        'feature-detects/*.js'
+        'feature-detects/**/*.js'
       ],
       tests: {
         options: {
@@ -177,19 +186,24 @@ module.exports = function( grunt ) {
       }
     }
   });
+
   // Load required contrib packages
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  require('matchdep').filter('grunt-*').forEach(grunt.loadNpmTasks);
+
+  // devDependencies may or may not be installed
+  require('matchdep').filterDev('grunt-*').forEach(function (contrib) {
+    module.paths.forEach(function (dir) {
+      if (fs.existsSync(path.join(dir, contrib))) {
+        grunt.loadNpmTasks(contrib);
+      }
+    });
+  });
 
   // Strip define fn
   grunt.registerMultiTask('stripdefine', "Strip define call from dist file", function() {
     this.filesSrc.forEach(function(filepath) {
-      var mod = grunt.file.read(filepath).replace('define("modernizr-init", function(){});', '');
+      // Remove `define("modernizr-init" ...)` and `define("modernizr-build" ...)`
+      var mod = grunt.file.read(filepath).replace(/define\("modernizr-(init|build)", function\(\)\{\}\);/g, '');
 
       // Hack the prefix into place. Anything is way to big for something so small.
       if ( modConfig && modConfig.classPrefix ) {
@@ -209,12 +223,12 @@ module.exports = function( grunt ) {
     grunt.file.write('tmp/modernizr-init.js', generateInit(modConfig));
   });
   // Testing tasks
-  grunt.registerTask('test', ['jshint', 'qunit']);
+  grunt.registerTask('test', ['build', 'jshint', 'qunit', 'nodeunit']);
 
   // Travis CI task.
   grunt.registerTask('travis', 'test');
 
   // Build
   grunt.registerTask('build', ['clean', 'generateinit', 'requirejs', 'copy', 'clean:postbuild', 'stripdefine', 'uglify', 'jshint']);
-  grunt.registerTask('default', 'build');
+  grunt.registerTask('default', ['build', 'qunit']);
 };
