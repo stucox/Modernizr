@@ -4,6 +4,7 @@
   "caniuse": "css-hyphens",
   "property": ["csshyphens", "softhyphens", "softhyphensfind"],
   "tags": ["css"],
+  "async" : true,
   "authors": ["David Newton"],
   "warnings": [
     "These tests currently require document.body to be present",
@@ -193,7 +194,7 @@ define(['Modernizr', 'prefixes', 'createElement', 'testAllProps', 'addTest'], fu
 
       addTest("csshyphens", function() {
 
-        if (!testAllProps('hyphens')) return false;
+        if (!testAllProps('hyphens', 'auto', true)) return false;
 
         /* Chrome lies about its hyphens support so we need a more robust test
            crbug.com/107111
