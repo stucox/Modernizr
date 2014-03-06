@@ -1,4 +1,4 @@
-define(['tests', 'is'], function ( tests, is ) {
+define(['tests', 'createTestObject'], function ( tests, is, createTestObject ) {
   var ModernizrProto = {
     // The current version, dummy
     _version: 'v3.0.0pre',
@@ -29,35 +29,10 @@ define(['tests', 'is'], function ( tests, is ) {
     },
 
     addTest: function( name, test, options ) {
-      // `test` may be an object, a function or a straight-up boolean;
-      // – object: split out `setUp` and `test phases
-      // – function: assume it’s the `test` phase
-      // – boolean: wrap as a function for consistency
-      if (is(test, 'object')) {
-        tests.push({
-          name: name,
-          setUp: test.setUp,
-          test: test.test,
-          options: options
-        });
-      }
-      else if (is(test, 'function')) {
-        tests.push({
-          name: name,
-          test: test,
-          options: options
-        });
-      }
-      else {
-        tests.push({
-          name: name,
-          test: function () { return test; },
-          options : options
-        });
-      }
+      tests.push(createTestObject(name, test, options));
     },
 
-    addAsyncTest: function (test) {
+    addAsyncTest: function ( test ) {
       tests.push({
         name: null,
         test: test
