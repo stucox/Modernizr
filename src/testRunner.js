@@ -1,4 +1,4 @@
-define(['tests', 'Modernizr', 'classes', 'createElement'], function( tests, Modernizr, classes, createElement ) {
+define(['tests', 'Modernizr', 'classes', 'createElement', 'getBody'], function( tests, Modernizr, classes, createElement, getBody ) {
   // Run through all tests and detect their support in the current UA.
   function testRunner() {
     var featureNames;
@@ -9,6 +9,10 @@ define(['tests', 'Modernizr', 'classes', 'createElement'], function( tests, Mode
     var featureName;
     var featureNameSplit;
     var featureIdx;
+    var body = getBody();
+    var root = createElement('div');
+
+    body.appendChild(root);
 
     // SETUP EACH TEST:
     // Create an element for each test to play with & run its setup fn (if it has one)
@@ -16,14 +20,19 @@ define(['tests', 'Modernizr', 'classes', 'createElement'], function( tests, Mode
       feature = tests[featureIdx];
       feature.elem = createElement('div');
 
+      // Some tests require the element to be in the body, so we just
+      // guarantee *all* tests will run in the body (even if it’s a
+      // fake one)
+      root.appendChild(feature.elem);
+
       if (feature.setUp) {
         feature.setUp(feature.elem);
       }
     }
 
     // RUN EACH TEST
-    // With the elements we created earlier
-    for ( featureIdx in tests) {
+    // With the elements we created earlier, storing the result on the Modernizr obj
+    for ( featureIdx in tests ) {
       featureNames = [];
       feature = tests[featureIdx];
       // run the test, throw the return value into the Modernizr,
@@ -67,6 +76,22 @@ define(['tests', 'Modernizr', 'classes', 'createElement'], function( tests, Mode
 
         classes.push((result ? '' : 'no-') + featureNameSplit.join('-'));
       }
+    }
+
+    // TEAR DOWN
+    // Feature tests may define a `tearDown` method
+    for ( featureIdx in tests ) {
+      feature = tests[featureIdx];
+      if (feature.tearDown) {
+        feature.tearDown(feature.elem);
+      }
+    }
+    // But in any case we need to remove the stuff we left in the DOM
+    if (body.fake) {
+      body.parentNode.removeChild(body);
+    }
+    else {
+      root.parentNode.removeChild(root);
     }
   }
 
