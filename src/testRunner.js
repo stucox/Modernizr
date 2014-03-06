@@ -1,4 +1,4 @@
-define(['tests', 'Modernizr', 'classes', 'createElement', 'getBody'], function( tests, Modernizr, classes, createElement, getBody ) {
+define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody'], function( tests, Modernizr, classes, docElement, createElement, getBody ) {
   // Run through all tests and detect their support in the current UA.
   function testRunner() {
     var featureNames;
@@ -10,19 +10,23 @@ define(['tests', 'Modernizr', 'classes', 'createElement', 'getBody'], function( 
     var featureNameSplit;
     var featureIdx;
     var body = getBody();
+
+    // All the tests can use a common parent, so it’s easy and fast to clean up
     var root = createElement('div');
 
+    // Some tests require the element to be in the body, so we just
+    // guarantee *all* tests will run in the body (even if it’s a
+    // fake one)
     body.appendChild(root);
+    if (body.fake) {
+      docElement.appendChild(body);
+    }
 
     // SETUP EACH TEST:
     // Create an element for each test to play with & run its setup fn (if it has one)
     for ( featureIdx in tests ) {
       feature = tests[featureIdx];
       feature.elem = createElement('div');
-
-      // Some tests require the element to be in the body, so we just
-      // guarantee *all* tests will run in the body (even if it’s a
-      // fake one)
       root.appendChild(feature.elem);
 
       if (feature.setUp) {
