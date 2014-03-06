@@ -17,27 +17,29 @@
 Detects whether input type="number" is capable of receiving and
 displaying localized numbers, e.g. with comma separator
 */
-define(['Modernizr', 'createElement', 'docElement', 'getBody'], function( Modernizr, createElement, docElement, getBody ) {
-  Modernizr.addTest('localizednumber', function() {
-    var el = createElement('div');
-    var diff;
-    var body = getBody();
+define(['Modernizr'], function( Modernizr ) {
+  Modernizr.addTest('localizednumber', {
 
-    var root = (function() {
-      return docElement.insertBefore(body, docElement.firstElementChild || docElement.firstChild);
-    }());
-    el.innerHTML = '<input type="number" value="1.0" step="0.1"/>';
-    var input = el.childNodes[0];
-    root.appendChild(el);
-    input.focus();
-    try {
-      document.execCommand('InsertText', false, '1,1');
-    } catch(e) { // prevent warnings in IE
+    setUp: function ( elem ) {
+      var input;
+
+      elem.innerHTML = '<input type="number" value="1.0" step="0.1"/>';
+      input = elem.childNodes[0];
+      input.focus();
+
+      try {
+        document.execCommand('InsertText', false, '1,1');
+      }
+      catch(e) { } // prevent warnings in IE
+    },
+
+    test: function ( elem ) {
+      var input = elem.childNodes[0];
+      var diff = input.type === 'number' &&
+          input.valueAsNumber === 1.1 &&
+          input.checkValidity();
+      return diff;
     }
-    diff = input.type === 'number' && input.valueAsNumber === 1.1 && input.checkValidity();
-    root.removeChild(el);
-    body.fake && root.parentNode.removeChild(root);
-    return diff;
-  });
 
+  });
 });
