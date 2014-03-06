@@ -1,4 +1,4 @@
-define(['tests', 'Modernizr', 'classes', 'is'], function( tests, Modernizr, classes, is ) {
+define(['tests', 'Modernizr', 'classes'], function( tests, Modernizr, classes ) {
   // Run through all tests and detect their support in the current UA.
   function testRunner() {
     var featureNames;
@@ -30,9 +30,8 @@ define(['tests', 'Modernizr', 'classes', 'is'], function( tests, Modernizr, clas
         }
       }
 
-      // Run the test, or use the raw value if it's not a function
-      result = is(feature.fn, 'function') ? feature.fn() : feature.fn;
-
+      // Run the test
+      result = feature.test();
 
       // Set each of the names on the Modernizr object
       for (nameIdx = 0; nameIdx < featureNames.length; nameIdx++) {
