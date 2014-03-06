@@ -1,4 +1,4 @@
-define(['tests', 'Modernizr', 'classes'], function( tests, Modernizr, classes ) {
+define(['tests', 'Modernizr', 'classes', 'createElement'], function( tests, Modernizr, classes, createElement ) {
   // Run through all tests and detect their support in the current UA.
   function testRunner() {
     var featureNames;
@@ -8,8 +8,22 @@ define(['tests', 'Modernizr', 'classes'], function( tests, Modernizr, classes ) 
     var nameIdx;
     var featureName;
     var featureNameSplit;
+    var featureIdx;
 
-    for ( var featureIdx in tests ) {
+    // SETUP EACH TEST:
+    // Create an element for each test to play with & run its setup fn (if it has one)
+    for ( featureIdx in tests ) {
+      feature = tests[featureIdx];
+      feature.elem = createElement('div');
+
+      if (feature.setUp) {
+        feature.setUp(feature.elem);
+      }
+    }
+
+    // RUN EACH TEST
+    // With the elements we created earlier
+    for ( featureIdx in tests) {
       featureNames = [];
       feature = tests[featureIdx];
       // run the test, throw the return value into the Modernizr,
@@ -31,7 +45,7 @@ define(['tests', 'Modernizr', 'classes'], function( tests, Modernizr, classes ) 
       }
 
       // Run the test
-      result = feature.test();
+      result = feature.test(feature.elem);
 
       // Set each of the names on the Modernizr object
       for (nameIdx = 0; nameIdx < featureNames.length; nameIdx++) {
