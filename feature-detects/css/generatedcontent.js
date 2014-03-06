@@ -6,7 +6,7 @@
   "warnings": ["Android won't return correct height for anything below 7px #738"]
 }
 !*/
-define(['Modernizr', 'testStyles', 'createElement'], function( Modernizr, testStyles, createElement ) {
+define(['Modernizr', 'createElement'], function( Modernizr, createElement ) {
   Modernizr.addTest('generatedcontent', {
     setUp: function ( elem ) {
       var style = createElement('style');
