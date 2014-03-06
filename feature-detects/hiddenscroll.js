@@ -8,12 +8,11 @@
 /* DOC
 Detects whether scrollbars on overflowed blocks are hidden (a-la iPhone)
 */
-define(['Modernizr', 'createElement'], function( Modernizr, createElement ) {
+define(['Modernizr', 'insertStyles'], function( Modernizr, insertStyles ) {
   Modernizr.addTest('hiddenscroll', {
     setUp: function ( elem ) {
-      var style = createElement('style');
-      style.innerHTML = '#' + elem.id + '{width:100px;height:100px;overflow:scroll}';
-      elem.appendChild(style);
+      var cssText = '#' + elem.id + '{width:100px;height:100px;overflow:scroll}';
+      insertStyles(cssText, elem);
     },
     test: function ( elem ) {
       return elem.offsetWidth === elem.clientWidth;
