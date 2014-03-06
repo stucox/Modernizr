@@ -1,4 +1,4 @@
-define(['tests', 'createTestObject'], function ( tests, is, createTestObject ) {
+define(['tests', 'createTestObject'], function ( tests, createTestObject ) {
   var ModernizrProto = {
     // The current version, dummy
     _version: 'v3.0.0pre',
