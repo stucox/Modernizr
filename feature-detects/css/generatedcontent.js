@@ -6,8 +6,15 @@
   "warnings": ["Android won't return correct height for anything below 7px #738"]
 }
 !*/
-define(['Modernizr', 'testStyles'], function( Modernizr, testStyles ) {
-  testStyles('#modernizr{font:0/0 a}#modernizr:after{content:":)";visibility:hidden;font:7px/1 a}', function( node ) {
-    Modernizr.addTest('generatedcontent', node.offsetHeight >= 7);
+define(['Modernizr', 'testStyles', 'createElement'], function( Modernizr, testStyles, createElement ) {
+  Modernizr.addTest('generatedcontent', {
+    setUp: function ( elem ) {
+      var style = createElement('style');
+      style.innerHTML = '#' + elem.id + '{font:0/0 a}#' + elem.id + ':after{content:":)";visibility:hidden;font:7px/1 a}';
+      elem.appendChild(style);
+    },
+    test: function ( elem ) {
+      return elem.offsetHeight >= 7;
+    }
   });
 });
