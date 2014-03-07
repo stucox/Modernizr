@@ -10,14 +10,21 @@
   }]
 }
 !*/
-define(['Modernizr', 'createElement', 'testStyles'], function( Modernizr, createElement, testStyles ) {
-  Modernizr.addTest('checked', function(){
-    return testStyles('#modernizr {position:absolute} #modernizr input {margin-left:10px} #modernizr :checked {margin-left:20px;display:block}', function( elem ){
-      var cb = createElement('input');
-      cb.setAttribute('type', 'checkbox');
-      cb.setAttribute('checked', 'checked');
-      elem.appendChild(cb);
-      return cb.offsetLeft === 20;
-    });
+define(['Modernizr', 'createElement', 'insertStyles'], function( Modernizr, createElement, insertStyles ) {
+  Modernizr.addTest('checked', {
+    setUp: function ( elem ) {
+      var cssText = '#' + elem.id + '{position:absolute}#' + elem.id + ' input {margin-left:10px} #' + elem.id + ' :checked {margin-left:20px;display:block}';
+      var checkbox = createElement('input');
+
+      insertStyles(cssText, elem);
+
+      checkbox.setAttribute('type', 'checkbox');
+      checkbox.setAttribute('checked', 'checked');
+      elem.appendChild(checkbox);
+    },
+    test: function ( elem ) {
+      var checkbox = elem.children[1];
+      return checkbox.offsetLeft === 20;
+    }
   });
 });
