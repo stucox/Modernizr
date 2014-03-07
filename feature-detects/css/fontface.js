@@ -26,24 +26,28 @@
   }]
 }
 !*/
-define(['Modernizr', 'testStyles'], function( Modernizr, testStyles ) {
-  var blacklist = (function() {
-    var ua = navigator.userAgent;
-    var wkvers = ua.match( /applewebkit\/([0-9]+)/gi ) && parseFloat( RegExp.$1 );
-    var webos = ua.match( /w(eb)?osbrowser/gi );
-    var wppre8 = ua.match( /windows phone/gi ) && ua.match( /iemobile\/([0-9])+/gi ) && parseFloat( RegExp.$1 ) >= 9;
-    var oldandroid = wkvers < 533 && ua.match( /android/gi );
-    return webos || oldandroid || wppre8;
-  }());
-  if( blacklist ) {
-    Modernizr.addTest('fontface', false);
-  } else {
-    testStyles('@font-face {font-family:"font";src:url("https://")}', function( node, rule ) {
-      var style = document.getElementById('smodernizr');
+define(['Modernizr', 'insertStyles'], function( Modernizr, insertStyles ) {
+  Modernizr.addTest('fontface', {
+    setUp: function ( elem ) {
+      var cssText = '@font-face {font-family:"font";src:url("https://")}';
+      insertStyles(cssText, elem);
+    },
+    test: function ( elem ) {
+      // Exit early if anything matches our blacklist
+      var ua = navigator.userAgent;
+      var wkvers = ua.match( /applewebkit\/([0-9]+)/gi ) && parseFloat( RegExp.$1 );
+      var webos = ua.match( /w(eb)?osbrowser/gi );
+      var wppre8 = ua.match( /windows phone/gi ) && ua.match( /iemobile\/([0-9])+/gi ) && parseFloat( RegExp.$1 ) >= 9;
+      var oldandroid = wkvers < 533 && ua.match( /android/gi );
+      if (webos || oldandroid || wppre8) {
+        return false;
+      }
+
+      // Otherwise, see if the styles have been retained
+      var style = elem.children[0];
       var sheet = style.sheet || style.styleSheet;
       var cssText = sheet ? (sheet.cssRules && sheet.cssRules[0] ? sheet.cssRules[0].cssText : sheet.cssText || '') : '';
-      var bool = /src/i.test(cssText) && cssText.indexOf(rule.split(' ')[0]) === 0;
-      Modernizr.addTest('fontface', bool);
-    });
-  }
+      return (/src/i).test(cssText) && cssText.indexOf('@font-face') === 0;
+    }
+  });
 });

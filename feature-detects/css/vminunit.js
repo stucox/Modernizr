@@ -13,13 +13,19 @@
   }]
 }
 !*/
-define(['Modernizr', 'docElement', 'testStyles'], function( Modernizr, docElement, testStyles ) {
-  testStyles('#modernizr { width: 50vmin; }', function( elem ) {
-    var one_vw = docElement.clientWidth/100;
-    var one_vh = docElement.clientHeight/100;
-    var compWidth = parseInt((window.getComputedStyle ?
-                          getComputedStyle(elem, null) :
-                          elem.currentStyle)['width'],10);
-    Modernizr.addTest('cssvminunit', parseInt(Math.min(one_vw, one_vh)*50,10) == compWidth );
+define(['Modernizr', 'docElement', 'insertStyles'], function( Modernizr, docElement, insertStyles ) {
+  Modernizr.addTest('cssvminunit', {
+    setUp: function ( elem ) {
+      var cssText = '#e!{width:50vmin;}';
+      insertStyles(cssText, elem);
+    },
+    test: function ( elem ) {
+      var one_vw = docElement.clientWidth/100;
+      var one_vh = docElement.clientHeight/100;
+      var compWidth = parseInt((window.getComputedStyle ?
+                                getComputedStyle(elem, null) :
+                                elem.currentStyle).width, 10);
+      return parseInt(Math.min(one_vw, one_vh) * 50, 10) == compWidth;
+    }
   });
 });

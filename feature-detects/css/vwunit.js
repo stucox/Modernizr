@@ -13,13 +13,18 @@
   }]
 }
 !*/
-define(['Modernizr', 'docElement', 'testStyles'], function( Modernizr, docElement, testStyles ) {
-  testStyles('#modernizr { width: 50vw; }', function( elem ) {
-    var width = parseInt(docElement.innerWidth/2,10);
-    var compStyle = parseInt((window.getComputedStyle ?
-                              getComputedStyle(elem, null) :
-                              elem.currentStyle)['width'],10);
-
-    Modernizr.addTest('cssvwunit', compStyle == width);
+define(['Modernizr', 'insertStyles'], function( Modernizr, insertStyles ) {
+  Modernizr.addTest('cssvwunit', {
+    setUp: function ( elem ) {
+      var cssText = '#e!{width:50vw}';
+      insertStyles(cssText, elem);
+    },
+    test: function ( elem ) {
+      var width = parseInt(window.innerWidth/2,10);
+      var compStyle = parseInt((window.getComputedStyle ?
+                                getComputedStyle(elem, null) :
+                                elem.currentStyle).width, 10);
+      return compStyle == width;
+    }
   });
 });

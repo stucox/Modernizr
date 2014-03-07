@@ -10,8 +10,16 @@
   }]
 }
 !*/
-define(['Modernizr', 'testStyles'], function( Modernizr, testStyles ) {
-  testStyles('#modernizr div {width:100px} #modernizr :last-child{width:200px;display:block}', function( elem ) {
-    Modernizr.addTest('lastchild', elem.lastChild.offsetWidth > elem.firstChild.offsetWidth);
-  }, 2);
+define(['Modernizr', 'insertStyles', 'createElement'], function( Modernizr, insertStyles, createElement ) {
+  Modernizr.addTest('lastchild', {
+    setUp: function ( elem ) {
+      var cssText = '#e! div {width:100px} #e! :last-child{width:200px;display:block}';
+      insertStyles(cssText, elem);
+      elem.appendChild(createElement('div'));
+      elem.appendChild(createElement('div'));
+    },
+    test: function ( elem ) {
+      return elem.lastChild.offsetWidth > elem.firstChild.offsetWidth;
+    }
+  });
 });

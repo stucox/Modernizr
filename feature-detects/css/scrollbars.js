@@ -5,13 +5,18 @@
   "tags": ["css"]
 }
 !*/
-define(['Modernizr', 'testStyles', 'prefixes'], function( Modernizr, testStyles, prefixes ) {
-  testStyles('#modernizr{overflow: scroll; width: 40px; height: 40px; }#' + prefixes
-    .join('scrollbar{width:0px}'+' #modernizr::')
-    .split('#')
-    .slice(1)
-    .join('#') + 'scrollbar{width:0px}',
-  function( node ) {
-    Modernizr.addTest('cssscrollbar', node.scrollWidth == 40);
+define(['Modernizr', 'insertStyles', 'prefixes'], function( Modernizr, insertStyles, prefixes ) {
+  Modernizr.addTest('cssscrollbar', {
+    setUp: function ( elem ) {
+      var cssText = '#e!{overflow: scroll; width: 40px; height: 40px; }#' + prefixes
+        .join('scrollbar{width:0px}'+' #e!::')
+        .split('#')
+        .slice(1)
+        .join('#') + 'scrollbar{width:0px}';
+      insertStyles(cssText, elem);
+    },
+    test: function ( elem ) {
+      return elem.scrollWidth == 40;
+    }
   });
 });

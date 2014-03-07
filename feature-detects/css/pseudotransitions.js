@@ -5,25 +5,27 @@
   "tags": ["css"]
 }
 !*/
-define(['Modernizr', 'testStyles', 'test/css/transitions'], function (Modernizr) {
-  Modernizr.addTest('csspseudotransitions', function () {
-    var result = false;
+define(['Modernizr', 'insertStyles', 'prefixes', 'test/css/transitions'], function ( Modernizr, insertStyles, prefixes ) {
+  Modernizr.addTest('csspseudotransitions', {
+    setUp: function ( elem ) {
+      var cssText =
+        '#e!:before { content:" "; font-size:5px;' + prefixes.join('transition:0s 100s;') + '}' +
+        '#e!.trigger:before { font-size:10px; }';
 
-    if (!Modernizr.csstransitions || !window.getComputedStyle) {
-      return result;
+      insertStyles(cssText, elem);
+    },
+    test: function ( elem ) {
+      // Quick exit if no CSS transitions & window.getComputedStyle support
+      if (!Modernizr.csstransitions || !window.getComputedStyle) {
+        return false;
+      }
+
+      // This test used to force DOM rendering here, but in object format this
+      // isn’t necessary because rendering is forced between `setUp` and `test`
+      // anyway
+      elem.className = 'trigger';
+      // pseudo transitions supported if `font-size` *doesn’t* change
+      return window.getComputedStyle(elem, ':before').getPropertyValue('font-size') === '5px';
     }
-
-    var styles =
-      '#modernizr:before { content:" "; font-size:5px;' + Modernizr._prefixes.join('transition:0s 100s;') + '}' +
-      '#modernizr.trigger:before { font-size:10px; }';
-
-    Modernizr.testStyles(styles, function (elem) {
-      // Force rendering of the element's styles so that the transition will trigger
-      window.getComputedStyle(elem, ':before').getPropertyValue('font-size');
-      elem.className += 'trigger';
-      result = window.getComputedStyle(elem, ':before').getPropertyValue('font-size') === '5px';
-    });
-
-    return result;
   });
 });
