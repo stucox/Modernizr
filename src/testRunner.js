@@ -27,7 +27,7 @@ define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody
     for ( featureIdx in tests ) {
       feature = tests[featureIdx];
       feature.elem = createElement('div');
-      feature.elem.id = 'modernizr' + featureIdx;
+      feature.elem.id = 'modernizr_' + feature.name;
       root.appendChild(feature.elem);
 
       if (feature.setUp) {
