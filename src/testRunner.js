@@ -1,4 +1,4 @@
-define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody'], function( tests, Modernizr, classes, docElement, createElement, getBody ) {
+define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody', 'cleanBody'], function( tests, Modernizr, classes, docElement, createElement, getBody, cleanBody ) {
   // Run through all tests and detect their support in the current UA.
   function testRunner() {
     var featureNames;
@@ -92,12 +92,8 @@ define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody
       }
     }
     // But in any case we need to remove the stuff we left in the DOM
-    if (body.fake) {
-      body.parentNode.removeChild(body);
-    }
-    else {
-      root.parentNode.removeChild(root);
-    }
+    root.parentNode.removeChild(root);
+    cleanBody();
   }
 
   return testRunner;

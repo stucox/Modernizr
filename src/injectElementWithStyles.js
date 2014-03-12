@@ -5,7 +5,6 @@ define(['ModernizrProto', 'docElement', 'createElement', 'getBody'], function( M
     var style;
     var ret;
     var node;
-    var docOverflow;
     var div = createElement('div');
 
     // IE6 will false positive on some tests due to the style element inside the test div somehow interfering offsetHeight;
@@ -33,30 +32,13 @@ define(['ModernizrProto', 'docElement', 'createElement', 'getBody'], function( M
     div.innerHTML += style;
     body.appendChild(div);
 
-    if ( body.fake ) {
-      //avoid crashing IE8, if background image is used
-      body.style.background = '';
-      //Safari 5.13/5.1.4 OSX stops loading if ::-webkit-scrollbar is used and scrollbars are visible (#524)
-      body.style.overflow = 'hidden';
-      docOverflow = docElement.style.overflow;
-      docElement.style.overflow = 'hidden';
-      docElement.appendChild(body);
-    }
+    // Fake body’s offset magic (which used to be here) is now set up by `getBody()`
 
     ret = callback(div, rule);
 
-    // TEMP: not removing fake body, because it may still be in use
-    //
-    // // If this is done after page load we don't want to remove the body so check if body exists
-    // if ( body.fake ) {
-    //   body.parentNode.removeChild(body);
-    //   docElement.style.overflow = docOverflow;
-    //   // Trigger layout so kinetic scrolling isn't disabled in iOS6+ (#707)
-    //   docElement.offsetHeight;
-    // } else {
-    //   div.parentNode.removeChild(div);
-    // }
-    // div.parentNode.removeChild(div);
+    // Fake body will be removed by testRunner (rather than here), if needed
+    // TODO: `getBody()` & `cleanBody()` could count calls, so they set up
+    // on the first and clean up on the last calls?
 
     return !!ret;
 
