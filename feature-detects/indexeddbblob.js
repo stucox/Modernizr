@@ -15,34 +15,41 @@ define(['Modernizr', 'addTest', 'prefixed', 'test/indexeddb'], function( Moderni
 
   Modernizr.addAsyncTest(function() {
     /* jshint -W053 */
-    var supportsBlob = false;
-    var dbname = 'detect-blob-support';
     var indexeddb = prefixed('indexedDB', window);
+    var dbname = 'detect-blob-support';
+    var supportsBlob = false;
     var request;
     var db;
 
-    if (!Modernizr.indexeddb) return false;
+    if (!(Modernizr.indexeddb && Modernizr.indexeddb.deleteDatabase)) return false;
 
-    indexeddb.deleteDatabase(dbname).onsuccess = function () {
-      request = indexeddb.open(dbname, 1);
-      request.onupgradeneeded = function() {
-        request.result.createObjectStore('store');
+    // Calling `deleteDatabase` in a try…catch because some contexts (e.g. data URIs)
+    // will throw a `SecurityError`
+    try {
+      indexeddb.deleteDatabase(dbname).onsuccess = function () {
+        request = indexeddb.open(dbname, 1);
+        request.onupgradeneeded = function() {
+          request.result.createObjectStore('store');
+        };
+        request.onsuccess = function() {
+          db = request.result;
+          try {
+            db.transaction('store', 'readwrite').objectStore('store').put(new Blob(), 'key');
+            supportsBlob = true;
+          }
+          catch (e) {
+            supportsBlob = false;
+          }
+          finally {
+            addTest('indexeddbblob', supportsBlob);
+            db.close();
+            indexeddb.deleteDatabase(dbname);
+          }
+        };
       };
-      request.onsuccess = function() {
-        db = request.result;
-        try {
-          db.transaction('store', 'readwrite').objectStore('store').put(new Blob(), 'key');
-          supportsBlob = true;
-        }
-        catch (e) {
-          supportsBlob = false;
-        }
-        finally {
-          addTest('indexeddbblob', supportsBlob);
-          db.close();
-          indexeddb.deleteDatabase(dbname);
-        }
-      };
-    };
+    }
+    catch (e) {
+      addTest('indexeddbblob', false);
+    }
   });
 });
