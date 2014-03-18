@@ -22,7 +22,8 @@ define(['Modernizr', 'insertStyles', 'prefixes', 'test/css/transitions'], functi
 
       // This test used to force DOM rendering here, but in object format this
       // isn’t necessary because rendering is forced between `setUp` and `test`
-      // anyway
+      // anyway; although the next line will invalidate styles again
+      // TODO: can this be done without read-write-read?
       elem.className = 'trigger';
       // pseudo transitions supported if `font-size` *doesn’t* change
       return window.getComputedStyle(elem, ':before').getPropertyValue('font-size') === '5px';
