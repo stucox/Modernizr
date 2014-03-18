@@ -15,28 +15,31 @@ define(['Modernizr', 'createElement', 'insertStyles'], function( Modernizr, crea
   Modernizr.addTest('details', {
     setUp: function ( elem ) {
       var cssText = '#e! details{display:block}';
-      var details = createElement('details');
+      var details1 = createElement('details');
+      var details2 = createElement('details');
 
-      details.innerHTML = '<summary>a</summary>b';
-      elem.appendChild(details);
+      // return early if possible; thanks @aFarkas!
+      if (!('open' in details1)) {
+        // TODO: use this.resolve() once implemented
+        return;
+      }
+
+      details1.innerHTML = '<summary>a</summary>b';
+      details2.innerHTML = '<summary>a</summary>b';
+      details2.open = true;
+
+      elem.appendChild(details1);
+      elem.appendChild(details2);
 
       insertStyles(cssText, elem);
     },
     test: function ( elem ) {
-      var details = elem.children[0];
-      var height;
+      var details1 = elem.children[0];
+      var details2 = elem.children[1];
 
-      // return early if possible; thanks @aFarkas!
-      if (!('open' in details)) {
-        return false;
-      }
-
-      // Otherwise, we’re looking for a change in height when
-      // details is opened
-      // TODO: Can we do this without DOM read-write-read?
-      height = details.offsetHeight;
-      details.open = true;
-      return height != details.offsetHeight;
+      // Otherwise, details1 and details2 will be different heights
+      // if the `open` property has had an effect
+      return details1.offsetHeight != details2.offsetHeight;
     }
   });
 });
