@@ -31,7 +31,7 @@ define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody
       root.appendChild(feature.elem);
 
       if (feature.setUp) {
-        feature.setUp(feature.elem);
+        feature.setUp.call(feature, feature.elem);
       }
     }
 
@@ -59,7 +59,7 @@ define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody
       }
 
       // Run the test
-      result = feature.test(feature.elem);
+      result = feature.test.call(feature, feature.elem);
 
       // Set each of the names on the Modernizr object
       for (nameIdx = 0; nameIdx < featureNames.length; nameIdx++) {
@@ -88,7 +88,7 @@ define(['tests', 'Modernizr', 'classes', 'docElement', 'createElement', 'getBody
     for ( featureIdx in tests ) {
       feature = tests[featureIdx];
       if (feature.tearDown) {
-        feature.tearDown(feature.elem);
+        feature.tearDown.call(feature, feature.elem);
       }
     }
     // But in any case we need to remove the stuff we left in the DOM
